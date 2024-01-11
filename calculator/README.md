@@ -10,8 +10,9 @@ calculator는 문자열을 입력받아 사칙연산과 괄호 연산을 처리�
 
 ## compile
 
+g++ calculator.cpp operator.cpp valuce.cpp -o calculator
+
 - gcc version : mac os Apple clang version 14.0.3 (clang-1403.0.22.14.1)
-  g++ calculator.cpp operator.cpp valuce.cpp -o calculator
 
 ## call by referance issue
 
