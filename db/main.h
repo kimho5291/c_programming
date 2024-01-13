@@ -1,20 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
+
+#include "struct.h"
+#include "user.h"
+
+#define BUF_SIZE 255
 
 
-struct myCL{
-    char* name;
-    int type;
-    myDB* next;
-} typedef myCL;
 
-struct myTB{
-    char* name;
-    myTB* next;
-} typedef myTB;
-
-struct myDB{
-    char* name;
-    myDB* next;
-    myTB* tables;
-} typedef myDB;
+char* getString();
