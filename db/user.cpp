@@ -1,22 +1,17 @@
 #include "user.h"
 
+User* u_head = NULL;
 
 bool checkUser(char* id, char* pw){
     User* now = u_head;
     bool flag = false;
 
-    while(now->next != NULL){
-        if(strcpy(now->id, id) && strcpy(now->pw, pw)){
+    while(now != NULL){
+        if(strcmp(now->id, id) == 0 && strcmp(now->pw, pw) == 0){
             flag = true;
             break;
         }
         now = now->next;
-    }
-
-    if(flag){
-        printf("## USER [%s] WELCOME !!\n", id);
-    }else{
-        printf("## USER [%s] NOT FOUND !!\n", id);
     }
 
     return flag;
@@ -26,11 +21,12 @@ void createUser(char* id, char* pw){
 
     User* user = (User*)malloc(sizeof(User));
     memset(user, 0, sizeof(User));
+    user->id = (char*)malloc(sizeof(char) * strlen(id));
+    user->pw = (char*)malloc(sizeof(char) * strlen(pw));
     strcpy(user->id, id);
     strcpy(user->pw, pw);
     user->next = NULL;
-    
-    
+
     if(u_head == NULL){
         u_head = user;
     }else{
@@ -50,8 +46,8 @@ void deleteUser(char* id, char* pw){
     User* now = u_head;
     bool flag = false;
 
-    while(now->next != NULL){
-        if(strcpy(now->id, id) && strcpy(now->pw, pw)){
+    while(now != NULL){
+        if(strcmp(now->id, id) == 0 && strcmp(now->pw, pw) == 0){
             flag = true;
             break;
         }
