@@ -37,7 +37,7 @@ void createUser(char* id, char* pw){
         temp->next = user;
     }
 
-    printf("## USER [%s] INSERT !!\n", id);
+    printf("## USER [%s | %s] INSERT !!\n", id, pw);
 
 }
 
@@ -63,3 +63,54 @@ void deleteUser(char* id, char* pw){
         printf("## USER [%s] NOT FOUND !!\n", id);
     }
 }
+
+void createUserFile(){
+    char path[100] = {'\0', };
+    sprintf(path, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    bool re = createDF(path, TYPE_F);
+    printf("## UserFile : %d\n", re);
+}
+
+void createUserDir(){
+    bool re = createDF(USER_DIR_PATH, TYPE_D);
+    printf("## UserDir : %d\n", re);
+}
+
+void readUserFile(){
+
+    char path[100] = {'\0', };
+    sprintf(path, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+
+    FILE* fp= fopen(path, "r");
+
+    char line[100] = {'\0', };
+    while (fgets(line, sizeof(line), fp) != NULL ) {
+
+        char* ptr = strtok(line, " ");
+        char* id = ptr;
+        ptr = strtok(NULL, "\n");
+        char* pw = ptr;
+
+		createUser(id, pw);
+	}
+
+    fclose(fp);
+}
+
+void writeUserFile(){
+    char path[100] = {'\0', };
+    sprintf(path, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+
+    FILE* fp = fopen(path,"w");
+
+    User* now = u_head;
+    while(now != NULL){
+        char temp[100] = {'\0', };
+        sprintf(temp,"%s %s\n", now->id, now->pw);
+        fputs(temp,fp);
+        now = now->next;
+    }
+
+    fclose(fp);
+}
+

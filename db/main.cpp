@@ -4,9 +4,7 @@ int main(int argc, char* argv[]){
 
     printf("-- DB START -- \n");
 
-    createUser((char*)"kim", (char*)"1234");
-    createUser((char*)"young", (char*)"aaaa");
-    createUser((char*)"ho", (char*)"bbbb");
+    readUserFile();
 
     char* id = argv[1];
     char* pw = argv[2];
@@ -19,7 +17,6 @@ int main(int argc, char* argv[]){
         printf("## USER [%s] NOT FOUND !!\n", id);
         printf("## please check ID & PW !!\n");
     }
-
 
 
     printf("-- DB END -- \n");

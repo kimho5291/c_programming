@@ -4,8 +4,10 @@
 #include <errno.h>
 
 enum{
-    DIR = 0,
-    FILE = 1
+    TYPE_D = 0,
+    TYPE_F = 1
 };
 
 bool createDF(char* path, int type);
+char* readFile(char* path);
+void writeFile(char* path, char* content);
