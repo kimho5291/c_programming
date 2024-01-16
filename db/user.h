@@ -14,8 +14,10 @@ void showUser();
 
 bool checkUser(char* id, char* pw);
 void createUser(char* id, char* pw);
-void createUser(char* cmd);
+int createUser(char* cmd);
+
 void deleteUser(char* id, char* pw);
+int deleteUser(char* cmd);
 
 void createUserFile();
 void createUserDir();

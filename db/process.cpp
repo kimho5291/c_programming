@@ -15,16 +15,16 @@ bool login(char* id, char* pw){
 void process(){
     char* cmd = NULL;
     int type = -1, oper = -1;
+    int re = 0;
+
     do{
+        re = 0;
         free(cmd);
         cmd = getString();
-        //printf("cmd : %s\n", cmd);
         oper = judgeOper(cmd);
-        //printf("oper : %d\n", oper);
         type = judgeType(oper, cmd);
-        //printf("type : %d\n", type);
 
-        if(oper == -1){
+        if(checkSyntex(oper, type, cmd) < 0){
             printf("## Please check Command : %s\n", cmd);
             continue;
         }
@@ -34,51 +34,20 @@ void process(){
         }
 
         if(oper == opCREATE){
-            if(type == tpUSER) createUser(cmd);
+            if(type == tpUSER) re = createUser(cmd);
+        }
+
+        if(oper == opDROP){
+            if(type == tpUSER) re = deleteUser(cmd);
+        }
+
+        if(re < 0){
+            if(re == -1) printf("## The ID already exists : %s\n", cmd);
+            if(re == -2) printf("## Please Check Id & PW : %s\n", cmd);
         }
 
     }while(oper != opEXIT);
 }
-
-int judgeOper(char* cmd){
-    char* ptr = strtok(cmd, " ");
-    
-    if(strcasecmp("SHOW", ptr) == 0) return opSHOW;
-    if(strcasecmp("CREATE", ptr) == 0) return opCREATE;
-    if(strcasecmp("DROP", ptr) == 0) return opDROP;
-    if(strcasecmp("INSERT", ptr) == 0) return opINSERT;
-    if(strcasecmp("UPDATE", ptr) == 0) return opUPDATE;
-    if(strcasecmp("DELETE", ptr) == 0) return opDELETE;
-    if(strcasecmp("SELECT", ptr) == 0) return opSELECT;
-    if(strcasecmp("EXIT", ptr) == 0) return opEXIT;
-
-    return -1;
-}
-
-int judgeType(int oper, char* cmd){
-    if(oper == opEXIT) return 0;
-
-    char* temp = NULL;
-    char* ptr = strtok_r(cmd, " ", &temp);
-    ptr = strtok(NULL, " ");
-
-    if(oper == opSHOW){
-        if(strcasecmp("USERS", ptr) == 0) return tpUSER;
-        if(strcasecmp("DATABASES", ptr) == 0) return tpDATABASE;
-        if(strcasecmp("TABLES", ptr) == 0) return tpTABLE;
-    }
-
-    if(oper >= opCREATE && oper <= opDROP){
-        if(strcasecmp("USER", ptr) == 0) return tpUSER;
-        if(strcasecmp("DATABASE", ptr) == 0) return tpDATABASE;
-        if(strcasecmp("TABLE", ptr) == 0) return tpTABLE;
-    }
-
-    if(oper >= opINSERT && oper <= opSELECT) return tpTABLE;
-
-    return -1;
-}
-
 
 
 char* getString(){

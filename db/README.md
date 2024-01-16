@@ -45,6 +45,8 @@ g++ main.cpp server.cpp client.cpp -o main
 
 상황 : 입력 받은 문자열 strtok 시 마지막 문자열 인식 불가
 
-- 첫 strtok시 strtok_r로 저장 위치 초기화
-- 이후 부터 strtok 사용으로 처리
-- strtok_r은 multi-thread 사용 시 위치 save 불가할 시 사용하는 것으로 알고있었으나 해당 문제도 해결 가능
+- strtok_r로 해결하려 했으나 잘 안됨
+- strtok_r은 multi-thread 사용 시 위치 save 불가할 시 사용
+- 문제 파악 : strtok을 하면 구분자로 사용하고자 했던 문자가 위치한 부분에 '\0'이 들어감
+- 다른 함수에서 사용하려고 하면 '\0' 때문에 문자열 인식 오류 발생
+- 문제 해결: 함수 내에서 strtok을 사용하기 전 문자열 clone하여 사용

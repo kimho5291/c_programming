@@ -53,29 +53,22 @@ void createUser(char* id, char* pw){
     //printf("## USER [%s | %s] INSERT !!\n", id, pw);
 }
 
-void createUser(char* cmd){
+int createUser(char* cmd){
 
-    // ex: create user kim 1234;\n
-    printf("cmd : %s\n", cmd);
-    char* temp = NULL;
-    char* ptr = strtok_r(cmd, " ", &temp);
-    printf("ptr1 : %s\n", ptr);
+    // ex: create user kim 1234\n
+    char temp[100] = {'\0', };
+    strcpy(temp, cmd);
 
-    ptr = strtok_r(NULL, " ", &temp);
-    printf("ptr2 : %s\n", ptr);
+    char* ptr = strtok(temp, " ");
+    ptr = strtok(NULL, " ");
 
     ptr = strtok(NULL, " ");
-    printf("ptr3 : %s\n", ptr);
     char* id = (char*)malloc(sizeof(char) * strlen(ptr));
     strcpy(id, ptr);
 
     ptr = strtok(NULL, " ");
-    printf("ptr4 : %s\n", ptr);
     char* pw = (char*)malloc(sizeof(char) * strlen(ptr));
     strcpy(pw, ptr);
-
-    printf("id : %s\n", id);
-    printf("pw : %s\n", pw);
 
     myUser* user = (myUser*)malloc(sizeof(myUser));
     memset(user, 0, sizeof(myUser));
@@ -88,6 +81,10 @@ void createUser(char* cmd){
     }else{
         myUser* temp = uHead;
         while(temp->next != NULL){
+            if(strcmp(temp->id, id)==0){
+                free(user);
+                return -1;
+            }
             temp = temp->next;
         }
         temp->next = user;
@@ -95,6 +92,7 @@ void createUser(char* cmd){
 
     writeUserFile();
     printf("## USER [%s | %s] INSERT !!\n", id, pw);
+    return 1;
 }
 
 void deleteUser(char* id, char* pw){
@@ -118,6 +116,42 @@ void deleteUser(char* id, char* pw){
     }else{
         printf("## USER [%s] NOT FOUND !!\n", id);
     }
+    writeUserFile();
+}
+
+int deleteUser(char* cmd){
+
+    // ex: drop user kim 1234\n
+    char temp[100] = {'\0', };
+    strcpy(temp, cmd);
+
+    char* ptr = strtok(temp, " ");
+    ptr = strtok(NULL, " ");
+
+    ptr = strtok(NULL, " ");
+    char* id = (char*)malloc(sizeof(char) * strlen(ptr));
+    strcpy(id, ptr);
+
+    ptr = strtok(NULL, " ");
+    char* pw = (char*)malloc(sizeof(char) * strlen(ptr));
+    strcpy(pw, ptr);
+
+    myUser* pre = uHead;
+    myUser* now = uHead;
+
+    while(now != NULL){
+        if(strcmp(now->id, id) == 0 && strcmp(now->pw, pw) == 0){
+            pre->next = now->next;
+            free(now);
+            printf("## USER [%s] DELETE !!\n", id);
+            writeUserFile();
+            return 1;
+        }
+        pre = now;
+        now = now->next;
+    }
+
+    return -2;
 }
 
 void createUserFile(){
