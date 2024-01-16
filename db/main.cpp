@@ -4,14 +4,16 @@ int main(int argc, char* argv[]){
 
     printf("-- DB START -- \n");
 
-    readUserFile();
+    sysInit();
 
     char* id = argv[1];
     char* pw = argv[2];
 
-    if(checkUser(id, pw)){
+    if(login(id, pw)){
         printf("## USER [%s] WELCOME !!\n", id);
 
+        // process
+        process();
 
     }else{
         printf("## USER [%s] NOT FOUND !!\n", id);
@@ -24,22 +26,4 @@ int main(int argc, char* argv[]){
     return 0;
 };
 
-char* getString(){
-
-    char temp[BUF_SIZE] = {'\0', };
-    char ch = NULL;
-    int idx = 0;
-
-    do{
-        ch = getchar();
-        if(ch != '\n'){
-            temp[idx++] = ch;
-        }
-    }while(ch != '\n');
-
-    char* array = (char*)malloc(sizeof(char) * idx);
-    strncpy(array, temp, idx);
-
-    return array;
-}
 

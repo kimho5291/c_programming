@@ -35,8 +35,16 @@ g++ main.cpp server.cpp client.cpp -o main
 - argv[3] : 목적지 Server IP
 - argv[4] : 목적지 Server Port
 
-## issue
+# issue
 
 - client의 recv 함수에서 서버가 꺼지면 length가 0으로 어떠한 문자열을 계속 수신
 - 그래서 recv에서 length가 0인 msg 수신 시 프로그램 종료하게 변경
 - 또한, client send에서 length가 0이면 보내지 않도록 처리 (경우의 수 : enter 치기)
+
+### strtok issue
+
+상황 : 입력 받은 문자열 strtok 시 마지막 문자열 인식 불가
+
+- 첫 strtok시 strtok_r로 저장 위치 초기화
+- 이후 부터 strtok 사용으로 처리
+- strtok_r은 multi-thread 사용 시 위치 save 불가할 시 사용하는 것으로 알고있었으나 해당 문제도 해결 가능

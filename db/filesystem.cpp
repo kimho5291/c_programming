@@ -23,23 +23,24 @@ bool createDF(char* path, int type){
     }
 }
 
-char* readFile(char* path){
-    FILE* fp= fopen(path, "r");
+// char* readFile(char* path){
+//     FILE* fp= fopen(path, "r");
 
-    char str[10000] = {'\0', };
-    char line[1000] = {'\0', };
-    while (fgets(line, sizeof(line), fp) != NULL ) {
-		printf("%s", str);
-        sprintf(str, "%s%s", str, line);
-	}
+//     char str[10000] = {'\0', };
+//     char line[1000] = {'\0', };
+//     while (fgets(line, sizeof(line), fp) != NULL ) {
+// 		printf("%s", str);
+//         sprintf(str, "%s%s", str, line);
+// 	}
 
-    fclose(fp);
+//     fclose(fp);
 
-    return str;
-}
+//     return str;
+// }
 
-void writeFile(char* path, char* content){
-    FILE* fp = fopen(path,"w");
-    fputs(content,fp);
-    fclose(fp);
-}
+// void writeFile(char* path, char* content){
+//     FILE* fp = fopen(path,"w");
+//     fputs(content,fp);
+//     fclose(fp);
+// }
+

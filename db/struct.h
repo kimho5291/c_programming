@@ -1,3 +1,5 @@
+#ifndef __STRUCT__
+#define __STRUCT__
 
 typedef union data{
     char* c_value;
@@ -29,3 +31,12 @@ typedef struct myDB{
     myDB* next;
     myTB* tables;
 } myDB;
+
+typedef struct myUser{
+    char* id;
+    char* pw;
+    myUser* next;
+    myDB* db;
+}myUser;
+
+#endif

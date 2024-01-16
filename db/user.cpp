@@ -1,9 +1,22 @@
 #include "user.h"
 
-User* u_head = NULL;
+
+myUser* uHead = NULL;
+
+void showUser(){
+    myUser* now = uHead;
+    int idx = 0;
+    printf("## ----- USER List -----\n");
+    while(now != NULL){
+        printf("[%d] %s %s\n", idx++, now->id, now->pw);
+        now = now->next;
+    }
+    printf("## ----- USER List -----\n");
+}
+
 
 bool checkUser(char* id, char* pw){
-    User* now = u_head;
+    myUser* now = uHead;
     bool flag = false;
 
     while(now != NULL){
@@ -19,31 +32,74 @@ bool checkUser(char* id, char* pw){
 
 void createUser(char* id, char* pw){
 
-    User* user = (User*)malloc(sizeof(User));
-    memset(user, 0, sizeof(User));
+    myUser* user = (myUser*)malloc(sizeof(myUser));
+    memset(user, 0, sizeof(myUser));
     user->id = (char*)malloc(sizeof(char) * strlen(id));
     user->pw = (char*)malloc(sizeof(char) * strlen(pw));
     strcpy(user->id, id);
     strcpy(user->pw, pw);
     user->next = NULL;
 
-    if(u_head == NULL){
-        u_head = user;
+    if(uHead == NULL){
+        uHead = user;
     }else{
-        User* temp = u_head;
+        myUser* temp = uHead;
         while(temp->next != NULL){
             temp = temp->next;
         }
         temp->next = user;
     }
 
-    printf("## USER [%s | %s] INSERT !!\n", id, pw);
+    //printf("## USER [%s | %s] INSERT !!\n", id, pw);
+}
 
+void createUser(char* cmd){
+
+    // ex: create user kim 1234;\n
+    printf("cmd : %s\n", cmd);
+    char* temp = NULL;
+    char* ptr = strtok_r(cmd, " ", &temp);
+    printf("ptr1 : %s\n", ptr);
+
+    ptr = strtok_r(NULL, " ", &temp);
+    printf("ptr2 : %s\n", ptr);
+
+    ptr = strtok(NULL, " ");
+    printf("ptr3 : %s\n", ptr);
+    char* id = (char*)malloc(sizeof(char) * strlen(ptr));
+    strcpy(id, ptr);
+
+    ptr = strtok(NULL, " ");
+    printf("ptr4 : %s\n", ptr);
+    char* pw = (char*)malloc(sizeof(char) * strlen(ptr));
+    strcpy(pw, ptr);
+
+    printf("id : %s\n", id);
+    printf("pw : %s\n", pw);
+
+    myUser* user = (myUser*)malloc(sizeof(myUser));
+    memset(user, 0, sizeof(myUser));
+    user->id = id;
+    user->pw = pw;
+    user->next = NULL;
+
+    if(uHead == NULL){
+        uHead = user;
+    }else{
+        myUser* temp = uHead;
+        while(temp->next != NULL){
+            temp = temp->next;
+        }
+        temp->next = user;
+    }
+
+    writeUserFile();
+    printf("## USER [%s | %s] INSERT !!\n", id, pw);
 }
 
 void deleteUser(char* id, char* pw){
-    User* pre = u_head;
-    User* now = u_head;
+    myUser* pre = uHead;
+    myUser* now = uHead;
     bool flag = false;
 
     while(now != NULL){
@@ -66,20 +122,22 @@ void deleteUser(char* id, char* pw){
 
 void createUserFile(){
     char path[100] = {'\0', };
-    sprintf(path, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
     bool re = createDF(path, TYPE_F);
     printf("## UserFile : %d\n", re);
 }
 
 void createUserDir(){
-    bool re = createDF(USER_DIR_PATH, TYPE_D);
+    char path[100] = {'\0', };
+    snprintf(path, 100, "%s", USER_DIR_PATH);
+    bool re = createDF(path, TYPE_D);
     printf("## UserDir : %d\n", re);
 }
 
 void readUserFile(){
 
     char path[100] = {'\0', };
-    sprintf(path, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
 
     FILE* fp= fopen(path, "r");
 
@@ -99,14 +157,14 @@ void readUserFile(){
 
 void writeUserFile(){
     char path[100] = {'\0', };
-    sprintf(path, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
 
     FILE* fp = fopen(path,"w");
 
-    User* now = u_head;
+    myUser* now = uHead;
     while(now != NULL){
         char temp[100] = {'\0', };
-        sprintf(temp,"%s %s\n", now->id, now->pw);
+        snprintf(temp, 100, "%s %s\n", now->id, now->pw);
         fputs(temp,fp);
         now = now->next;
     }

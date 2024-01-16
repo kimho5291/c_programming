@@ -1,3 +1,7 @@
+
+#ifndef __FILESYSTEM__
+#define __FILESYSTEM__
+
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -9,5 +13,7 @@ enum{
 };
 
 bool createDF(char* path, int type);
-char* readFile(char* path);
-void writeFile(char* path, char* content);
+// char* readFile(char* path);
+// void writeFile(char* path, char* content);
+
+#endif
