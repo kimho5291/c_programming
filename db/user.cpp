@@ -1,6 +1,6 @@
 #include "user.h"
 
-
+myUser* selUser = NULL;
 myUser* uHead = NULL;
 
 void showUser(){
@@ -22,6 +22,7 @@ bool checkUser(char* id, char* pw){
     while(now != NULL){
         if(strcmp(now->id, id) == 0 && strcmp(now->pw, pw) == 0){
             flag = true;
+            selUser = now;
             break;
         }
         now = now->next;
@@ -50,6 +51,7 @@ void createUser(char* id, char* pw){
         temp->next = user;
     }
 
+    // writeUserFile();
     //printf("## USER [%s | %s] INSERT !!\n", id, pw);
 }
 
@@ -80,18 +82,21 @@ int createUser(char* cmd){
         uHead = user;
     }else{
         myUser* temp = uHead;
-        while(temp->next != NULL){
+        do{
             if(strcmp(temp->id, id)==0){
                 free(user);
+                free(id);
+                free(pw);
                 return -1;
             }
             temp = temp->next;
-        }
+        }while(temp->next != NULL);
         temp->next = user;
     }
 
     writeUserFile();
-    printf("## USER [%s | %s] INSERT !!\n", id, pw);
+    createUserDir(id);
+    printf("## USER [%s | %s] CREATE !!\n", id, pw);
     return 1;
 }
 
@@ -110,8 +115,10 @@ void deleteUser(char* id, char* pw){
     }
 
     if(flag){
-        printf("## USER [%s] DELETE !!\n", id);
+        printf("## USER [%s] DROP !!\n", id);
         pre->next = now->next;
+        free(now->id);
+        free(now->pw);
         free(now);
     }else{
         printf("## USER [%s] NOT FOUND !!\n", id);
@@ -136,6 +143,10 @@ int deleteUser(char* cmd){
     char* pw = (char*)malloc(sizeof(char) * strlen(ptr));
     strcpy(pw, ptr);
 
+    if(strcmp((char*)"root", id) == 0){
+        return -3;
+    }
+
     myUser* pre = uHead;
     myUser* now = uHead;
 
@@ -145,6 +156,7 @@ int deleteUser(char* cmd){
             free(now);
             printf("## USER [%s] DELETE !!\n", id);
             writeUserFile();
+
             return 1;
         }
         pre = now;
@@ -154,18 +166,53 @@ int deleteUser(char* cmd){
     return -2;
 }
 
+
+void initUser(){
+    createBasicDir();
+    createUserFile();
+
+    initUserFile();
+}
+
 void createUserFile(){
     char path[100] = {'\0', };
     snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
     bool re = createDF(path, TYPE_F);
-    printf("## UserFile : %d\n", re);
+    // printf("## UserFile : %d\n", re);
 }
 
-void createUserDir(){
+void initUserFile(){
+    char path[100] = {'\0', };
+    snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    
+    int idx = 0;
+    char line[100] = {'\0', };
+
+    FILE* fp= fopen(path, "r");
+    while (fgets(line, sizeof(line), fp) != NULL ) {
+        idx++;
+        break;
+	}
+    fclose(fp);
+
+    if(idx == 0){
+        createUser((char*)"create user root 1234");
+    }
+
+}
+
+void createBasicDir(){
     char path[100] = {'\0', };
     snprintf(path, 100, "%s", USER_DIR_PATH);
     bool re = createDF(path, TYPE_D);
-    printf("## UserDir : %d\n", re);
+    // printf("## UserDir : %d\n", re);
+}
+
+void createUserDir(char* id){
+    char path[100] = {'\0', };
+    snprintf(path, 100, "%s/%s", USER_DIR_PATH, id);
+    bool re = createDF(path, TYPE_D);
+    // printf("## UserDir : %d\n", re);
 }
 
 void readUserFile(){

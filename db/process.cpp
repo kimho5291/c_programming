@@ -2,6 +2,9 @@
 
 void sysInit(){
 
+    // file init
+    initUser();
+
     // read file
     readUserFile();
 
@@ -44,6 +47,7 @@ void process(){
         if(re < 0){
             if(re == -1) printf("## The ID already exists : %s\n", cmd);
             if(re == -2) printf("## Please Check Id & PW : %s\n", cmd);
+            if(re == -3) printf("## can't remove root : %s\n", cmd);
         }
 
     }while(oper != opEXIT);

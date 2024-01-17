@@ -5,4 +5,11 @@
 #include "filesystem.h"
 #include "struct.h"
 
-int test();
+extern myDB* selDatabase;
+
+void showDatabase();
+
+int useDatabase(char* cmd);
+
+void createDatabase(char* name);
+int createDatabase(char* cmd);

@@ -3,6 +3,7 @@
 
 enum{
     opSHOW = 0,
+    opUSE,
     opCREATE,
     opDROP,
     opINSERT,

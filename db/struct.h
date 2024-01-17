@@ -29,7 +29,7 @@ typedef struct myTB{
 typedef struct myDB{
     char* name;
     myDB* next;
-    myTB* tables;
+    myTB* table;
 } myDB;
 
 typedef struct myUser{

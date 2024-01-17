@@ -1,6 +1,0 @@
-root 1234
-kim 1234
-young aaaa
-ho bbbb
-ims 111
-kims 1234

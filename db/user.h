@@ -5,10 +5,11 @@
 #include "struct.h"
 #include "filesystem.h"
 
-#define USER_DIR_PATH "./user"
+#define USER_DIR_PATH "./db"
 #define USER_FILE_PATH "user.txt"
 
 extern myUser* uHead;
+extern myUser* selUser;
 
 void showUser();
 
@@ -19,8 +20,13 @@ int createUser(char* cmd);
 void deleteUser(char* id, char* pw);
 int deleteUser(char* cmd);
 
+void initUser();
+
+void initUserFile();
+void createBasicDir();
 void createUserFile();
-void createUserDir();
+void createUserDir(char* id);
+
 
 void readUserFile();
 void writeUserFile();

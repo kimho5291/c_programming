@@ -8,6 +8,7 @@ int judgeOper(char* cmd){
     char* ptr = strtok(temp, " ");
     
     if(strcasecmp("SHOW", ptr) == 0) return opSHOW;
+    if(strcasecmp("USE", ptr) == 0) return opUSE;
     if(strcasecmp("CREATE", ptr) == 0) return opCREATE;
     if(strcasecmp("DROP", ptr) == 0) return opDROP;
     if(strcasecmp("INSERT", ptr) == 0) return opINSERT;
@@ -33,6 +34,8 @@ int judgeType(int oper, char* cmd){
         if(strcasecmp("DATABASES", ptr) == 0) return tpDATABASE;
         if(strcasecmp("TABLES", ptr) == 0) return tpTABLE;
     }
+
+    if(oper == opUSE) return tpUSER;
 
     if(oper >= opCREATE && oper <= opDROP){
         if(strcasecmp("USER", ptr) == 0) return tpUSER;
