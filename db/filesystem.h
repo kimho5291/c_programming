@@ -6,6 +6,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <string.h>
+
+#include <stdlib.h>
+#include <dirent.h>
+
 
 #define BASIC_DIR_PATH "./db"
 #define USER_FILE_PATH "user.txt"
@@ -18,6 +23,8 @@ enum{
 
 bool createDF(char* path, int type);
 bool removeDF(char* path);
+int dirAllDel(char* path);
+
 // char* readFile(char* path);
 // void writeFile(char* path, char* content);
 

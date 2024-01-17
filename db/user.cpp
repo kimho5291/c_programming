@@ -224,8 +224,8 @@ void deleteUserDir(char* id){
 
     char path[100] = {'\0', };
     snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, id);
-    bool re = removeDF(path);
-    printf("## deleteUserDir : %d\n", re);
+    bool re = dirAllDel(path);
+    //printf("## deleteUserDir : %d\n", re);
 }
 
 void readUserFile(){

@@ -146,7 +146,7 @@ void createDBFile(char* cmd){
 void deleteDBDir(char* name){
     char path[100] = {'\0', };
     snprintf(path, 100, "%s/%s/%s", BASIC_DIR_PATH, sUser->id, name);
-    bool re = removeDF(path);
+    bool re = dirAllDel(path);
     //printf("## UserDir : %d\n", re);
 }
 
