@@ -10,9 +10,11 @@ mysql과 유사한 DB 구조를 가진 DataBase 구현
 2. DB Control
 3. 종료
 
-### 로그인
+### 실행방법
 
 mysql과 동일하게 프로그램 시작 시 argument 입력으로 로그인 기능 구현
+
+- ex: main root 1234
 
 ## compile
 
@@ -20,26 +22,28 @@ g++ main.cpp server.cpp client.cpp -o main
 
 - gcc version : mac os Apple clang version 14.0.3 (clang-1403.0.22.14.1)
 
-## 서버, 클라이언트 실행 방법(예시)
+## 사용 가능한 명령어
 
-- 서버
-  ./main server 9090
-- 클라이언트
-  ./main client 9091 127.0.0.1 9090
+1. SHOW
 
-## argument 별 설명
+- show users
+- show databases
 
-- argv[0] : 프로그램 명
-- argv[1] : 사용할 Type (server, client)
-- argv[2] : 사용할 Port
-- argv[3] : 목적지 Server IP
-- argv[4] : 목적지 Server Port
+2. CREATE
+
+- create user [id] [pw]
+- create database [name]
+
+3. DROP
+
+- drop user [id] [pw]
+- drop database [name]
+
+4. USE
+
+- use database [name]
 
 # issue
-
-- client의 recv 함수에서 서버가 꺼지면 length가 0으로 어떠한 문자열을 계속 수신
-- 그래서 recv에서 length가 0인 msg 수신 시 프로그램 종료하게 변경
-- 또한, client send에서 length가 0이면 보내지 않도록 처리 (경우의 수 : enter 치기)
 
 ### strtok issue
 
@@ -55,4 +59,12 @@ g++ main.cpp server.cpp client.cpp -o main
 
 상황 : stdio.h에 존재하는 remove함수는 폴더가 비어있어야 삭제 가능
 
-- 하위 모든 내용을 돌면서 삭제할 생각
+- 폴더에 들어가면 모든 내용을 돌면서 파일이면 삭제
+- 폴더가 있으면 재귀로 해당 폴더 내 파일도 전부 삭제
+
+### 중복 참조 issue
+
+상황 : struct.h를 각 파일에서 참조해서 이슈 발생
+
+- ifndef로 처리
+- 컴파일 전처리기에서 정의되어있지 않으면 선언하도록 처리

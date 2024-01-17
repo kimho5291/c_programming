@@ -2,6 +2,11 @@
 
 myUser* selUser = NULL;
 myUser* uHead = NULL;
+dbDelFunction dbCallback = NULL;
+
+void setDBDelCallback(dbDelFunction cb){
+    dbCallback = cb;
+}
 
 void showUser(){
     myUser* now = uHead;
@@ -125,10 +130,11 @@ void deleteUser(char* id, char* pw){
     }else{
         printf("## USER [%s] NOT FOUND !!\n", id);
     }
+
     writeUserFile();
 }
 
-int deleteUser(char* cmd){
+int deleteUserCmd(char* cmd){
 
     // ex: drop user kim 1234\n
     char temp[100] = {'\0', };
@@ -138,6 +144,12 @@ int deleteUser(char* cmd){
     ptr = strtok(NULL, " ");
 
     ptr = strtok(NULL, " ");
+    if(strcmp((char*)"root", ptr) == 0){
+        return -3;
+    }
+    if(strcmp(selUser->id, ptr) == 0){
+        return -5;
+    }
     char* id = (char*)malloc(sizeof(char) * strlen(ptr));
     strcpy(id, ptr);
 
@@ -145,9 +157,6 @@ int deleteUser(char* cmd){
     char* pw = (char*)malloc(sizeof(char) * strlen(ptr));
     strcpy(pw, ptr);
 
-    if(strcmp((char*)"root", id) == 0){
-        return -3;
-    }
 
     myUser* pre = uHead;
     myUser* now = uHead;
@@ -156,17 +165,27 @@ int deleteUser(char* cmd){
         if(strcmp(now->id, id) == 0 && strcmp(now->pw, pw) == 0){
             pre->next = now->next;
             printf("## USER [%s] DELETE !!\n", id);
+
             writeUserFile();
             deleteUserDir(id);
 
-            free(now);
+            if(dbCallback != NULL){
+                dbCallback(now->db);
+            }
+
             free(id);
             free(pw);
+            free(now->id);
+            free(now->pw);
+            free(now);
             return 1;
         }
         pre = now;
         now = now->next;
     }
+
+    free(id);
+    free(pw);
 
     return -2;
 }
@@ -181,14 +200,14 @@ void initUser(){
 
 void createUserFile(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_NAME);
     bool re = createDF(path, TYPE_F);
     // printf("## UserFile : %d\n", re);
 }
 
 void initUserFile(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_NAME);
     
     int idx = 0;
     char line[100] = {'\0', };
@@ -231,7 +250,7 @@ void deleteUserDir(char* id){
 void readUserFile(){
 
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_NAME);
 
     FILE* fp= fopen(path, "r");
 
@@ -251,7 +270,7 @@ void readUserFile(){
 
 void writeUserFile(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_NAME);
 
     FILE* fp = fopen(path,"w");
 

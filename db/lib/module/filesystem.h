@@ -13,8 +13,9 @@
 
 
 #define BASIC_DIR_PATH "./db"
-#define USER_FILE_PATH "user.txt"
-#define DATABASE_FILE_PATH "db.txt"
+#define USER_FILE_NAME "user.txt"
+#define DATABASE_FILE_NAME "db.txt"
+#define TABLE_FILE_NAME "table.txt"
 
 enum{
     TYPE_D = 0,

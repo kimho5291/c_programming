@@ -35,7 +35,7 @@ int judgeType(int oper, char* cmd){
         if(strcasecmp("TABLES", ptr) == 0) return tpTABLE;
     }
 
-    if(oper == opUSE) return tpUSER;
+    if(oper == opUSE) return tpDATABASE;
 
     if(oper >= opCREATE && oper <= opDROP){
         if(strcasecmp("USER", ptr) == 0) return tpUSER;

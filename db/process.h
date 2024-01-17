@@ -1,12 +1,11 @@
 
 
-#include "parser.h"
-#include "user.h"
-#include "database.h"
+#include "lib/module/parser.h"
+#include "lib/user.h"
+#include "lib/database.h"
+#include "lib/table.h"
 
 #define BUF_SIZE 255
-
-
 
 
 void sysInit();

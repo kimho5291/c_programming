@@ -3,9 +3,10 @@
 #include<string.h>
 
 #include "struct.h"
-#include "filesystem.h"
+#include "module/filesystem.h"
 
-
+typedef int (*dbDelFunction)(myDB*);
+void setDBDelCallback(dbDelFunction);
 
 
 extern myUser* uHead;
@@ -18,7 +19,7 @@ void createUser(char* id, char* pw);
 int createUserCmd(char* cmd);
 
 void deleteUser(char* id, char* pw);
-int deleteUser(char* cmd);
+int deleteUserCmd(char* cmd);
 
 void initUser();
 

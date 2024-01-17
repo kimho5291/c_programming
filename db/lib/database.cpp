@@ -6,6 +6,7 @@ myUser* sUser = NULL;
 void initDatabase(myUser* selUser){
     sUser = selUser;
 
+
     readDBFile();
 
 }
@@ -34,6 +35,7 @@ int useDatabase(char* cmd){
     strcpy(name, ptr);
 
     myDB* dbHead = sUser->db;
+
     myDB* now = dbHead;
     while(now != NULL){
         if(strcmp(now->name, name) == 0){
@@ -43,7 +45,7 @@ int useDatabase(char* cmd){
         now = now->next;
     }
 
-    return -1;
+    return -4;
 
 }
 
@@ -60,7 +62,7 @@ void createDatabase(char* name){
 
     myDB* dbHead = sUser->db;
     if(dbHead == NULL){
-        dbHead = db;
+        sUser->db = db;
     }else{
         myDB* temp = dbHead;
         while(temp->next != NULL){
@@ -74,6 +76,7 @@ void createDatabase(char* name){
 
 
 int createDatabaseCmd(char* cmd){
+
     char temp[100] = {'\0', };
     strcpy(temp, cmd);
 
@@ -93,7 +96,7 @@ int createDatabaseCmd(char* cmd){
 
     myDB* dbHead = sUser->db;
     if(dbHead == NULL){
-        dbHead = db;
+        sUser->db = db;
     }else{
         myDB* pre = dbHead;
         myDB* temp = dbHead;
@@ -109,6 +112,7 @@ int createDatabaseCmd(char* cmd){
         pre->next = db;
     }
 
+
     writeDBFile();
     createDBDir(name);
 
@@ -116,6 +120,59 @@ int createDatabaseCmd(char* cmd){
     return 1;
 }
 
+int deleteDBCmd(char* cmd){
+
+    char temp[100] = {'\0', };
+    strcpy(temp, cmd);
+
+    // ex: drop database [database name]
+    char* ptr = strtok(temp, " ");
+    ptr = strtok(NULL, " ");
+
+    ptr = strtok(NULL, " ");
+    char* name = (char*)malloc(sizeof(char) * strlen(ptr));
+    strcpy(name, ptr);
+
+    myDB* pre = sUser->db;
+    myDB* now = sUser->db;
+
+    while(now != NULL){
+        if(strcmp(now->name, name) == 0){
+            if(pre == sUser->db) sUser->db = now->next;
+            else pre->next = now->next;
+
+
+            writeDBFile();
+            deleteDBDir(name);
+            printf("## DATABASE [%s] DELETE !!\n", name);
+
+            free(name);
+            free(now->name);
+            free(now);
+            
+
+            return 1;
+        }
+        pre = now;
+        now = now->next;
+    }
+
+    free(name);
+
+    return -4;
+}
+
+int deleteDBAll(myDB* node){
+    if(node == NULL) return 1;
+    int re = deleteDBAll(node->next);
+
+    node->next = NULL;
+    free(node->name);
+    // TBDELETEALL function 넣어줄 위치 
+    // node->table
+    free(node);
+    return 1;
+}
 
 void createDBDir(char* name){
     char path[100] = {'\0', };
@@ -137,7 +194,7 @@ void createDBFile(char* cmd){
     ptr = strtok(NULL, " ");
 
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s/%s", BASIC_DIR_PATH, ptr, DATABASE_FILE_PATH);
+    snprintf(path, 100, "%s/%s/%s", BASIC_DIR_PATH, ptr, DATABASE_FILE_NAME);
 
     bool re = createDF(path, TYPE_F);
     // printf("## UserFile : %d\n", re);
@@ -153,13 +210,12 @@ void deleteDBDir(char* name){
 
 void writeDBFile(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s/%s", BASIC_DIR_PATH, sUser->id, DATABASE_FILE_PATH);
+    snprintf(path, 100, "%s/%s/%s", BASIC_DIR_PATH, sUser->id, DATABASE_FILE_NAME);
 
     FILE* fp = fopen(path,"w");
 
     myDB* now = sUser->db;
     while(now != NULL){
-        printf("name: %s\n", now->name);
         char temp[100] = {'\0', };
         snprintf(temp, 100, "%s\n", now->name);
         fputs(temp,fp);
@@ -171,7 +227,7 @@ void writeDBFile(){
 
 void readDBFile(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s/%s", BASIC_DIR_PATH, sUser->id, DATABASE_FILE_PATH);
+    snprintf(path, 100, "%s/%s/%s", BASIC_DIR_PATH, sUser->id, DATABASE_FILE_NAME);
 
     FILE* fp= fopen(path, "r");
 
