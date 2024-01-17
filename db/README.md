@@ -50,3 +50,9 @@ g++ main.cpp server.cpp client.cpp -o main
 - 문제 파악 : strtok을 하면 구분자로 사용하고자 했던 문자가 위치한 부분에 '\0'이 들어감
 - 다른 함수에서 사용하려고 하면 '\0' 때문에 문자열 인식 오류 발생
 - 문제 해결: 함수 내에서 strtok을 사용하기 전 문자열 clone하여 사용
+
+### remove issue
+
+상황 : stdio.h에 존재하는 remove함수는 폴더가 비어있어야 삭제 가능
+
+- 하위 모든 내용을 돌면서 삭제할 생각

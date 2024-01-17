@@ -57,7 +57,7 @@ int checkSyntex(int oper, int type, char* cmd){
 
     if(oper >= opCREATE && oper <= opDROP){
         if(type == tpUSER && countChar(cmd, ' ') != 3) return -1;
-        if(type == tpDATABASE && countChar(cmd, ' ') != 3) return -1;
+        else if(type == tpDATABASE && countChar(cmd, ' ') != 2) return -1;
         //if(type == tpTABLE) return tpTABLE;
     }
 

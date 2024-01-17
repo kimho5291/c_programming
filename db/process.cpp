@@ -11,7 +11,11 @@ void sysInit(){
 }
 
 bool login(char* id, char* pw){
-    return checkUser(id, pw);
+
+    bool re = checkUser(id, pw);
+    if(re) initDatabase(selUser);
+    
+    return re;
 }
 
 
@@ -34,10 +38,17 @@ void process(){
 
         if(oper == opSHOW){
             if(type == tpUSER) showUser();
+            if(type == tpDATABASE) showDatabase();
         }
 
+        
+
         if(oper == opCREATE){
-            if(type == tpUSER) re = createUser(cmd);
+            if(type == tpUSER) {
+                re = createUserCmd(cmd);
+                if(re > 0) createDBFile(cmd);
+            }
+            if(type == tpDATABASE) re = createDatabaseCmd(cmd);
         }
 
         if(oper == opDROP){

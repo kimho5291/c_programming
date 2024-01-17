@@ -23,6 +23,13 @@ bool createDF(char* path, int type){
     }
 }
 
+bool removeDF(char* path){
+
+    int re = remove(path);
+    return re == 0 ? true : false;
+
+}
+
 // char* readFile(char* path){
 //     FILE* fp= fopen(path, "r");
 

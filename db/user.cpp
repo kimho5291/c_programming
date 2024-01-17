@@ -55,7 +55,7 @@ void createUser(char* id, char* pw){
     //printf("## USER [%s | %s] INSERT !!\n", id, pw);
 }
 
-int createUser(char* cmd){
+int createUserCmd(char* cmd){
 
     // ex: create user kim 1234\n
     char temp[100] = {'\0', };
@@ -81,17 +81,19 @@ int createUser(char* cmd){
     if(uHead == NULL){
         uHead = user;
     }else{
+        myUser* pre = uHead;
         myUser* temp = uHead;
-        do{
+        while(temp != NULL){
             if(strcmp(temp->id, id)==0){
                 free(user);
                 free(id);
                 free(pw);
                 return -1;
             }
+            pre = temp;
             temp = temp->next;
-        }while(temp->next != NULL);
-        temp->next = user;
+        };
+        pre->next = user;
     }
 
     writeUserFile();
@@ -153,10 +155,13 @@ int deleteUser(char* cmd){
     while(now != NULL){
         if(strcmp(now->id, id) == 0 && strcmp(now->pw, pw) == 0){
             pre->next = now->next;
-            free(now);
             printf("## USER [%s] DELETE !!\n", id);
             writeUserFile();
+            deleteUserDir(id);
 
+            free(now);
+            free(id);
+            free(pw);
             return 1;
         }
         pre = now;
@@ -176,14 +181,14 @@ void initUser(){
 
 void createUserFile(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_PATH);
     bool re = createDF(path, TYPE_F);
     // printf("## UserFile : %d\n", re);
 }
 
 void initUserFile(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_PATH);
     
     int idx = 0;
     char line[100] = {'\0', };
@@ -196,29 +201,37 @@ void initUserFile(){
     fclose(fp);
 
     if(idx == 0){
-        createUser((char*)"create user root 1234");
+        createUserCmd((char*)"create user root 1234");
     }
 
 }
 
 void createBasicDir(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s", USER_DIR_PATH);
+    snprintf(path, 100, "%s", BASIC_DIR_PATH);
     bool re = createDF(path, TYPE_D);
     // printf("## UserDir : %d\n", re);
 }
 
 void createUserDir(char* id){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", USER_DIR_PATH, id);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, id);
     bool re = createDF(path, TYPE_D);
     // printf("## UserDir : %d\n", re);
+}
+
+void deleteUserDir(char* id){
+
+    char path[100] = {'\0', };
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, id);
+    bool re = removeDF(path);
+    printf("## deleteUserDir : %d\n", re);
 }
 
 void readUserFile(){
 
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_PATH);
 
     FILE* fp= fopen(path, "r");
 
@@ -238,7 +251,7 @@ void readUserFile(){
 
 void writeUserFile(){
     char path[100] = {'\0', };
-    snprintf(path, 100, "%s/%s", USER_DIR_PATH, USER_FILE_PATH);
+    snprintf(path, 100, "%s/%s", BASIC_DIR_PATH, USER_FILE_PATH);
 
     FILE* fp = fopen(path,"w");
 

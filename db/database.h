@@ -7,9 +7,19 @@
 
 extern myDB* selDatabase;
 
+void initDatabase(myUser* sUser);
+
 void showDatabase();
 
 int useDatabase(char* cmd);
 
 void createDatabase(char* name);
-int createDatabase(char* cmd);
+int createDatabaseCmd(char* cmd);
+
+void deleteDBDir(char* name);
+
+void createDBDir(char* name);
+void createDBFile(char* cmd);
+
+void writeDBFile();
+void readDBFile();
