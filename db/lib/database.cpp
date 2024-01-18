@@ -40,11 +40,13 @@ int useDatabase(char* cmd){
     while(now != NULL){
         if(strcmp(now->name, name) == 0){
             selDatabase = now;
+            printf("## USE [%s] DATABASE  !! \n", name);
+            free(name);
             return 1;
         }
         now = now->next;
     }
-
+    free(name);
     return -4;
 
 }

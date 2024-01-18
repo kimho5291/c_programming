@@ -10,4 +10,8 @@ void initTBDatabase(myDB* db);
 
 void showTables();
 
+void createTB(char* name);
+int createTBCmd(char* cmd);
+
 void createTBFile(char* cmd);
+
