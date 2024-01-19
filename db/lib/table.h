@@ -4,14 +4,19 @@
 
 #include "module/filesystem.h"
 #include "struct.h"
+#include "column.h"
 
 void initTBUser(myUser* user);
 void initTBDatabase(myDB* db);
 
-void showTables();
+int showTables();
+int descTable(char* cmd);
 
 void createTB(char* name);
 int createTBCmd(char* cmd);
 
 void createTBFile(char* cmd);
+
+void writeTBFile();
+void readTBFile();
 

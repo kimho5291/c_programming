@@ -10,6 +10,7 @@ enum{
     opUPDATE,
     opDELETE,
     opSELECT,
+    opDESC,
     opEXIT
 };
 

@@ -1,0 +1,1 @@
+user name,char,10 age,int,10

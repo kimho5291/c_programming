@@ -14,7 +14,7 @@ typedef struct myDt{
 
 typedef struct myCL{
     char* name;
-    int type;
+    char type[5];
     int size;
     myCL* next;
     myDt* data;

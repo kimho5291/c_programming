@@ -12,10 +12,12 @@ void initTBDatabase(myDB* db){
     tbDatabase = db;
 
     // 파일 읽기
-
+    readTBFile();
 }
 
-void showTables(){
+int showTables(){
+    if(tbDatabase == NULL) return -10;
+
     myTB* now = tbDatabase->table;
     int idx = 0;
     printf("## ----- Table List -----\n");
@@ -24,18 +26,46 @@ void showTables(){
         now = now->next;
     }
     printf("## ----- Table List -----\n");
+    return 1;
 }
 
-void createTB(char* name){
+int descTable(char* cmd){
+    if(tbDatabase == NULL) return -10;
 
-    char* temp = (char*)malloc(sizeof(char) * strlen(name));
-    strcpy(temp, name);
+    // desc [table name]
+    char* ptr = strtok(cmd, " ");
+    ptr = strtok(NULL, " ");
+
+    myTB* now = tbDatabase->table;
+    
+    printf("## ----- DESC Columns -----\n");
+    while(now != NULL){
+        if(strcmp(now->name, ptr) == 0){
+            showColumns(now);
+        }
+        now = now->next;
+    }
+    printf("## ----- DESC Columns -----\n");
+    return 1;
+}
+
+void createTB(char* line){
+
+    // ex: [table name] [columns info]
+    char* ptr = strtok(line, " ");
+
+    char* name = (char*)malloc(sizeof(char) * strlen(ptr));
+    strcpy(name, ptr);
+
 
     myTB* tb = (myTB*)malloc(sizeof(myTB));
     memset(tb, 0, sizeof(myTB));
-    tb->name= temp;
+    tb->name= name;
     tb->next = NULL;
-    tb->column = NULL;
+
+    // create columns
+    ptr = strtok(NULL, "\n");
+    createCL(tb, ptr);
 
     myTB* tbHead = tbDatabase->table;
     if(tbHead == NULL){
@@ -50,22 +80,28 @@ void createTB(char* name){
 }
 
 int createTBCmd(char* cmd){
+    if(tbDatabase == NULL) return -10;
+
     char temp[100] = {'\0', };
     strcpy(temp, cmd);
 
-    // ex: create table [table name] //[column info]
+    // ex: create table [table name] [column info]
     char* ptr = strtok(temp, " ");
     ptr = strtok(NULL, " ");
 
     ptr = strtok(NULL, " ");
-    char name[100] = {'\0', };
+    char* name = (char*)malloc(strlen(ptr));
     strcpy(name, ptr);
+
 
     myTB* tb = (myTB*)malloc(sizeof(myTB));
     memset(tb, 0, sizeof(myTB));
     tb->name= name;
     tb->next = NULL;
-    tb->column = NULL;
+
+    // create columns
+    ptr = strtok(NULL, "\n");
+    createCL(tb, ptr);
 
     myTB* tbHead = tbDatabase->table;
     if(tbHead == NULL){
@@ -78,7 +114,8 @@ int createTBCmd(char* cmd){
         temp->next = tb;
     }
 
-    //writeDBFile();
+    createCLFile(tbUser, tbDatabase, tb);
+    writeTBFile();
     //createDBDir(name);
 
     printf("## TABLE [%s] CREATE !!\n", name);
@@ -102,4 +139,45 @@ void createTBFile(char* cmd){
 
     bool re = createDF(path, TYPE_F);
     // printf("## UserFile : %d\n", re);
+}
+
+void writeTBFile(){
+    char path[100] = {'\0', };
+    snprintf(path, 100, "%s/%s/%s/%s", BASIC_DIR_PATH, tbUser->id, tbDatabase->name, TABLE_FILE_NAME);
+
+    FILE* fp = fopen(path,"w");
+
+    myTB* now = tbDatabase->table;
+
+    while(now != NULL){
+        char temp[200] = {'\0', };
+
+        snprintf(temp, 200, "%s", now->name);
+        myCL* nowCL = now->column;
+        while(nowCL != NULL){
+            snprintf(temp, 200, "%s %s,%s,%d", temp, nowCL->name, nowCL->type, nowCL->size);
+            nowCL = nowCL->next;
+        }
+        snprintf(temp, 200, "%s\n", temp);
+
+        fputs(temp,fp);
+        now = now->next;
+    }
+
+    fclose(fp);
+}
+void readTBFile(){
+    char path[100] = {'\0', };
+    snprintf(path, 100, "%s/%s/%s/%s", BASIC_DIR_PATH, tbUser->id, tbDatabase->name, TABLE_FILE_NAME);
+
+    FILE* fp= fopen(path, "r");
+
+    char line[200] = {'\0', };
+    while (fgets(line, sizeof(line), fp) != NULL ) {
+
+        // [table name] [columns info]
+        createTB(line);
+	}
+
+    fclose(fp);
 }

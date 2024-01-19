@@ -15,6 +15,7 @@ int judgeOper(char* cmd){
     if(strcasecmp("UPDATE", ptr) == 0) return opUPDATE;
     if(strcasecmp("DELETE", ptr) == 0) return opDELETE;
     if(strcasecmp("SELECT", ptr) == 0) return opSELECT;
+    if(strcasecmp("DESC", ptr) == 0) return opDESC;
     if(strcasecmp("EXIT", ptr) == 0) return opEXIT;
 
     return -1;
@@ -44,6 +45,7 @@ int judgeType(int oper, char* cmd){
     }
 
     if(oper >= opINSERT && oper <= opSELECT) return tpTABLE;
+    if(oper == opDESC) return tpDATABASE;
 
     return -1;
 }

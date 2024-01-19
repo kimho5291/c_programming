@@ -37,17 +37,17 @@ void process(){
         oper = judgeOper(cmd);
         type = judgeType(oper, cmd);
 
+        // printf("oper: %d | type : %d\n", oper, type);
+
         if(checkSyntex(oper, type, cmd) < 0){
             printf("## Please check Command : %s\n", cmd);
             continue;
         }
 
         if(oper == opSHOW){
-            if(selDatabase == NULL && type == tpTABLE) re = -10; 
-
             if(type == tpUSER) showUser();
             if(type == tpDATABASE) showDatabase();
-            if(type == tpTABLE) showTables();
+            if(type == tpTABLE) re = showTables();
         }
 
         if(oper == opUSE){
@@ -58,7 +58,6 @@ void process(){
         }
 
         if(oper == opCREATE){
-            if(selDatabase == NULL && type == tpTABLE) re = -10; 
 
             if(type == tpUSER) {
                 re = createUserCmd(cmd);
@@ -69,13 +68,17 @@ void process(){
                 if(re > 0) createTBFile(cmd);
             }
             if(type == tpTABLE) {
-                
+                re = createTBCmd(cmd);
             }
         }
 
         if(oper == opDROP){
             if(type == tpUSER) re = deleteUserCmd(cmd);
             if(type == tpDATABASE) re = deleteDBCmd(cmd);
+        }
+
+        if(oper == opDESC && type == tpTABLE){
+            re = descTable(cmd);
         }
 
         if(re < 0){
