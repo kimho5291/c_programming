@@ -45,7 +45,7 @@ int judgeType(int oper, char* cmd){
     }
 
     if(oper >= opINSERT && oper <= opSELECT) return tpTABLE;
-    if(oper == opDESC) return tpDATABASE;
+    if(oper == opDESC) return tpTABLE;
 
     return -1;
 }

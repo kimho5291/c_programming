@@ -169,9 +169,10 @@ int deleteUserCmd(char* cmd){
             writeUserFile();
             deleteUserDir(id);
 
-            if(dbCallback != NULL){
-                dbCallback(now->db);
-            }
+            // db info is loaded after logining in, so only user point is deleted
+            // if(dbCallback != NULL){
+            //     dbCallback(now->db);
+            // }
 
             free(id);
             free(pw);

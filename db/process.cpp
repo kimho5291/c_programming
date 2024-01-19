@@ -9,6 +9,7 @@ void sysInit(){
     readUserFile();
 
     setDBDelCallback(deleteDBAll);
+    setTBDelCallback(dropAllTB);
 
 }
 
@@ -75,6 +76,7 @@ void process(){
         if(oper == opDROP){
             if(type == tpUSER) re = deleteUserCmd(cmd);
             if(type == tpDATABASE) re = deleteDBCmd(cmd);
+            if(type == tpTABLE) re = dropTableCmd(cmd);
         }
 
         if(oper == opDESC && type == tpTABLE){
@@ -87,6 +89,9 @@ void process(){
             if(re == -3) printf("## can't remove root : %s\n", cmd);
             if(re == -4) printf("## Please Check DB Name : %s\n", cmd);
             if(re == -5) printf("## can't remove yourself : %s\n", cmd);
+            if(re == -6) printf("## The Table already exists : %s\n", cmd);
+            if(re == -7) printf("## Please Check Table Name : %s\n", cmd);
+            if(re == -8) printf("## Please Check Columns Name : %s\n", cmd);
             if(re == -10) printf("## The CMD can used after DATABASE Select : %s\n", cmd);
         }
 

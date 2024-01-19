@@ -6,6 +6,8 @@
 #include "struct.h"
 
 extern myDB* selDatabase;
+typedef int (*tbDelFunction)(myTB*);
+void setTBDelCallback(tbDelFunction);
 
 void initDatabase(myUser* sUser);
 

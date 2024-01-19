@@ -12,6 +12,15 @@ void initTBDatabase(myDB* db);
 int showTables();
 int descTable(char* cmd);
 
+int insertTableCmd(char* cmd);
+int selectTableCmd(char* cmd);
+int updateTableCmd(char* cmd);
+int deleteTableCmd(char* cmd);
+
+
+int dropTableCmd(char* cmd);
+int dropAllTB(myTB* node);
+
 void createTB(char* name);
 int createTBCmd(char* cmd);
 

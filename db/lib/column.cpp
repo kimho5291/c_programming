@@ -3,11 +3,13 @@
 void showColumns(myTB* table){
     myCL* now = table->column;
     int idx = 0;
-    printf("   name \t type \t size\n");
+    printf("## ----- DESC Columns -----\n");
+    printf("      name  |  type  |   size\n");
     while(now != NULL){
-        printf("[%d]%s \t %s \t %d\n", idx++, now->name, now->type, now->size);
+        printf("[%d]  %s  |  %s  |  %d\n", idx++, now->name, now->type, now->size);
         now = now->next;
     }
+    printf("## ----- DESC Columns -----\n");
 }
 
 int createCL(myTB* table, char* cmd){
@@ -39,15 +41,38 @@ int createCL(myTB* table, char* cmd){
         if(table->column == NULL){
             table->column = tempCL;
         }else{
+            myCL* pre = table->column;
             myCL* now = table->column;
-            while(now->next != NULL){
+            while(now != NULL){
+                if(strcmp(now->name, name) == 0){
+                    free(name);
+                    free(tempCL);
+                    return -8;
+                }
+                pre = now;
                 now = now->next;
             }
-            now->next = tempCL;
+            pre->next = tempCL;
         }
 
         ptr = strtok(next, " ");
     }
+
+    return 1;
+}
+
+
+
+int deleteAllCL(myCL* node){
+    if(node == NULL) return 1;
+    int re = deleteAllCL(node->next);
+
+    // delete all data
+
+    node->data = NULL;
+    node->next = NULL;
+    free(node->name);
+    free(node);
 
     return 1;
 }
@@ -58,4 +83,11 @@ void createCLFile(myUser* user, myDB* db, myTB* tb){
     snprintf(path, 100, "%s/%s/%s/%s", BASIC_DIR_PATH, user->id, db->name, tb->name);
 
     bool re = createDF(path, TYPE_F);
+}
+
+void removeCLFile(myUser* user, myDB* db, myTB* tb){
+    char path[100] = {'\0', };
+    snprintf(path, 100, "%s/%s/%s/%s", BASIC_DIR_PATH, user->id, db->name, tb->name);
+    bool re = removeDF(path);
+    //printf("## UserDir : %d\n", re);
 }

@@ -36,17 +36,18 @@ int descTable(char* cmd){
     char* ptr = strtok(cmd, " ");
     ptr = strtok(NULL, " ");
 
+    ptr = strtok(NULL, " ");
     myTB* now = tbDatabase->table;
-    
-    printf("## ----- DESC Columns -----\n");
+
     while(now != NULL){
         if(strcmp(now->name, ptr) == 0){
             showColumns(now);
+            return 1;
         }
         now = now->next;
     }
-    printf("## ----- DESC Columns -----\n");
-    return 1;
+
+    return -7;
 }
 
 void createTB(char* line){
@@ -101,17 +102,31 @@ int createTBCmd(char* cmd){
 
     // create columns
     ptr = strtok(NULL, "\n");
-    createCL(tb, ptr);
+    int re = createCL(tb, ptr);
+    if(re < 0) {
+        deleteAllCL(tb->column);
+        free(name);
+        free(tb);
+        return re;
+    }
 
     myTB* tbHead = tbDatabase->table;
     if(tbHead == NULL){
         tbDatabase->table = tb;
     }else{
+        myTB* pre = tbHead;
         myTB* temp = tbHead;
-        while(temp->next != NULL){
+        while(temp != NULL){
+            if(strcmp(temp->name, tb->name) == 0){
+                deleteAllCL(tb->column);
+                free(name);
+                free(tb);
+                return -6;
+            }
+            pre = temp;
             temp = temp->next;
         }
-        temp->next = tb;
+        pre->next = tb;
     }
 
     createCLFile(tbUser, tbDatabase, tb);
@@ -121,6 +136,83 @@ int createTBCmd(char* cmd){
     printf("## TABLE [%s] CREATE !!\n", name);
     return 1;
 }
+
+int dropTableCmd(char* cmd){
+
+    char temp[100] = {'\0', };
+    strcpy(temp, cmd);
+
+    // ex: drop table [table name]
+    char* ptr = strtok(temp, " ");
+    ptr = strtok(NULL, " ");
+
+    ptr = strtok(NULL, " ");
+    char* name = (char*)malloc(sizeof(char) * strlen(ptr));
+    strcpy(name, ptr);
+
+    myTB* pre = tbDatabase->table;
+    myTB* now = tbDatabase->table;
+
+    while(now != NULL){
+        if(strcmp(now->name, name) == 0){
+            if(pre == tbDatabase->table) tbDatabase->table = now->next;
+            else pre->next = now->next;
+
+            deleteAllCL(now->column);
+            removeCLFile(tbUser, tbDatabase, now);
+
+            writeTBFile();
+            printf("## TABLE [%s] DELETE !!\n", name);
+
+            now->column = NULL;
+            free(now->name);
+            free(now);
+
+            return 1;
+        }
+        pre = now;
+        now = now->next;
+    }
+
+    return -7;
+}
+
+int insertTableCmd(char* cmd){
+    
+
+    return 1;
+}
+
+int selectTableCmd(char* cmd){
+    return 1;
+}
+
+int updateTableCmd(char* cmd){
+    return 1;
+}
+
+int deleteTableCmd(char* cmd){
+    return 1;
+}
+
+
+int dropAllTB(myTB* node){
+    if(node == NULL) return 1;
+    dropAllTB(node->next);
+
+    deleteAllCL(node->column);
+
+    writeTBFile();
+    // printf("## TABLE [%s] DELETE !!\n", node->name);
+
+    node->column = NULL;
+    free(node->name);
+    free(node);
+
+    return 1;
+}
+
+
 
 void createTBFile(char* cmd){
     char temp[100] = {'\0', };

@@ -2,6 +2,11 @@
 
 myDB* selDatabase = NULL;
 myUser* sUser = NULL;
+tbDelFunction tbCallback = NULL;
+
+void setTBDelCallback(tbDelFunction cb){
+    tbCallback = cb;
+}
 
 void initDatabase(myUser* selUser){
     sUser = selUser;
@@ -143,11 +148,13 @@ int deleteDBCmd(char* cmd){
             if(pre == sUser->db) sUser->db = now->next;
             else pre->next = now->next;
 
+            if(tbCallback != NULL)  tbCallback(now->table);
 
             writeDBFile();
             deleteDBDir(name);
             printf("## DATABASE [%s] DELETE !!\n", name);
 
+            now->table = NULL;
             free(name);
             free(now->name);
             free(now);
@@ -164,15 +171,22 @@ int deleteDBCmd(char* cmd){
     return -4;
 }
 
+
 int deleteDBAll(myDB* node){
+
     if(node == NULL) return 1;
     int re = deleteDBAll(node->next);
 
-    node->next = NULL;
+    tbCallback(node->table);
+
+    writeDBFile();
+    deleteDBDir(node->name);
+    // printf("## DATABASE [%s] DELETE !!\n", node->name);
+
+    node->table = NULL;
     free(node->name);
-    // TBDELETEALL function 넣어줄 위치 
-    // node->table
     free(node);
+
     return 1;
 }
 

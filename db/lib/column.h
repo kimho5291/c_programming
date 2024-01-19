@@ -9,4 +9,10 @@ void showColumns(myTB* table);
 
 int createCL(myTB* table, char* cmd);
 
+
+
+int deleteAllCL(myCL* column);
+
+
 void createCLFile(myUser* user, myDB* db, myTB* tb);
+void removeCLFile(myUser* user, myDB* db, myTB* tb);
