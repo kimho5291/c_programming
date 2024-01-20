@@ -33,15 +33,22 @@ g++ main.cpp server.cpp client.cpp -o main
 
 - create user [id] [pw]
 - create database [name]
+- create table [name] [columnsInfo] (columnInfo standard : name,type,size ) (divide ' ') use [database] 이후 사용가능
 
 3. DROP
 
 - drop user [id] [pw]
 - drop database [name]
+- drop table [name] use [database] 이후 사용가능
 
 4. USE
 
 - use database [name]
+
+5. DESC
+   use [database] 이후 사용가능
+
+- desc table [name]
 
 # issue
 

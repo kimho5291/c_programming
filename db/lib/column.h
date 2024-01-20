@@ -9,6 +9,8 @@ void showColumns(myTB* table);
 
 int createCL(myTB* table, char* cmd);
 
+int insertData(myTB* table, char* cmd);
+
 
 
 int deleteAllCL(myCL* column);

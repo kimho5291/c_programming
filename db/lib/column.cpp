@@ -61,7 +61,22 @@ int createCL(myTB* table, char* cmd){
     return 1;
 }
 
+int insertData(myTB* table, char* cmd){
 
+    // data ex: kim 20
+    char temp[100] = {'\0', };
+    strcpy(temp, cmd);
+
+    // check that both column and data match
+    myCL* now = table->column;
+    while(now!=NULL){
+
+        now = now->next;
+    }
+
+
+    return 1;
+}
 
 int deleteAllCL(myCL* node){
     if(node == NULL) return 1;

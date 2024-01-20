@@ -178,20 +178,52 @@ int dropTableCmd(char* cmd){
 }
 
 int insertTableCmd(char* cmd){
-    
+    int flag = -7; 
 
-    return 1;
+    char temp[200] = {'\0', };
+    strcpy(temp, cmd);
+    // insert table [tableName] [datas]
+
+    char* ptr = strtok(temp, " ");
+    ptr = strtok(NULL, " ");
+
+    ptr = strtok(NULL, " ");
+    char* name = (char*)malloc(sizeof(char) * strlen(ptr));
+    strcpy(name, ptr);
+    
+    myTB* now = tbDatabase->table;
+    while(now != NULL){
+        if(strcmp(name, now->name) == 0){
+            ptr = strtok(NULL, "\n");
+            flag = insertData(now, ptr);
+            break;
+        }
+        now = now->next;
+    }
+    free(name);
+    return flag;
 }
 
 int selectTableCmd(char* cmd){
+    // select table [tableName] (optional) where [conditions]
+    
+
+
+
     return 1;
 }
 
 int updateTableCmd(char* cmd){
+    // update table [tableName] set [update value] (optional) where [conditions]
+
+
     return 1;
 }
 
 int deleteTableCmd(char* cmd){
+    // delete table [tableName] (optional) where [conditions]
+
+
     return 1;
 }
 
