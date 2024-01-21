@@ -63,9 +63,39 @@ int createCL(myTB* table, char* cmd){
 
 int insertData(myTB* table, char* cmd){
 
-    // data ex: kim 20
-    char temp[100] = {'\0', };
-    strcpy(temp, cmd);
+    /*
+    1. parse data -> check data -> data stored in list -> check number of data
+    2. check number of columns in table
+    3. if the number of colmuns and nimber of data match we continue, 
+        otherwise an error code is returned after data memory is freed
+    */
+
+    // cmd ex: kim 20
+    char line[100] = {'\0', };
+    strcpy(line, cmd);
+
+    char* ptr = strtok(line, " ");
+    myDt* tempHead = NULL;
+    while(ptr != NULL){
+        char* tempChar = (char*)malloc(sizeof(strlen(ptr)));
+        strcpy(tempChar, ptr);
+        myDt* temp = (myDt*)malloc(sizeof(myDt));
+        temp->data = (Data*)malloc(sizeof(Data));
+        temp->data.c_value = tempChar;
+        temp->nextNULL;
+
+        if(tempHead == NULL){
+            tempHead = temp;
+        }else{
+            myDt* now = tempHead;
+            while(now->next != NULL){
+                now = now->next;
+            }
+            now->next = temp;
+        }
+
+        ptr = strtok(NULL, " ");
+    }
 
     // check that both column and data match
     myCL* now = table->column;
