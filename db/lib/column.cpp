@@ -76,13 +76,15 @@ int insertData(myTB* table, char* cmd){
 
     char* ptr = strtok(line, " ");
     myDt* tempHead = NULL;
+    int dataCount = 0;
     while(ptr != NULL){
+        dataCount++;
+
         char* tempChar = (char*)malloc(sizeof(strlen(ptr)));
         strcpy(tempChar, ptr);
         myDt* temp = (myDt*)malloc(sizeof(myDt));
-        temp->data = (Data*)malloc(sizeof(Data));
         temp->data.c_value = tempChar;
-        temp->nextNULL;
+        temp->next = NULL;
 
         if(tempHead == NULL){
             tempHead = temp;
@@ -99,11 +101,57 @@ int insertData(myTB* table, char* cmd){
 
     // check that both column and data match
     myCL* now = table->column;
+    int columnCount = 0;
     while(now!=NULL){
-
+        columnCount++;
         now = now->next;
     }
 
+    if(dataCount != columnCount){
+        while(tempHead != NULL){
+            myDt* temp = tempHead;
+            tempHead = tempHead->next;
+            free(temp);
+        }
+        return -9;
+    }
+
+    now = table->column;
+    myDt* nowDt = tempHead;
+    while(now!=NULL){
+
+        if(strcmp(now->type, "char") == 0 ){
+            now->data = nowDt;
+        }
+        else if(strcmp(now->type, "int") == 0 ){
+            int temp = atoi(nowDt->data.c_value);
+            if(isnan(temp)){
+                return -11;
+            }
+
+            free(nowDt->data.c_value);
+            nowDt->data.i_value = temp;
+        }
+        else if(strcmp(now->type, "folat") == 0 ){
+            double temp = atof(nowDt->data.c_value);
+            if(isnan(temp)){
+                return -11;
+            }
+
+            free(nowDt->data.c_value);
+            nowDt->data.d_value = temp;
+        }
+        else{
+            return -11;
+        }
+
+        now = now->next;
+
+        myDt* pre = nowDt;
+        nowDt = nowDt->next;
+
+        pre->next=NULL;
+    }
 
     return 1;
 }

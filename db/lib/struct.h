@@ -4,7 +4,7 @@
 typedef union data{
     char* c_value;
     int i_value;
-    float f_value;
+    double d_value;
 }Data;
 
 typedef struct myDt{
@@ -14,7 +14,7 @@ typedef struct myDt{
 
 typedef struct myCL{
     char* name;
-    char type[5];
+    char type[6];
     int size;
     myCL* next;
     myDt* data;

@@ -1,9 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<math.h>
 
 #include "module/filesystem.h"
 #include "struct.h"
+#include "module/parser.h"
 
 void showColumns(myTB* table);
 

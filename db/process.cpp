@@ -85,14 +85,17 @@ void process(){
 
         if(re < 0){
             if(re == -1) printf("## The ID already exists : %s\n", cmd);
-            if(re == -2) printf("## Please Check ID & PW : %s\n", cmd);
-            if(re == -3) printf("## can't remove root : %s\n", cmd);
-            if(re == -4) printf("## Please Check DB Name : %s\n", cmd);
-            if(re == -5) printf("## can't remove yourself : %s\n", cmd);
-            if(re == -6) printf("## The Table already exists : %s\n", cmd);
-            if(re == -7) printf("## Please Check Table Name : %s\n", cmd);
-            if(re == -8) printf("## Please Check Columns Name : %s\n", cmd);
-            if(re == -10) printf("## The CMD can used after DATABASE Select : %s\n", cmd);
+            else if(re == -2) printf("## Please Check ID & PW : %s\n", cmd);
+            else if(re == -3) printf("## can't remove root : %s\n", cmd);
+            else if(re == -4) printf("## Please Check DB Name : %s\n", cmd);
+            else if(re == -5) printf("## can't remove yourself : %s\n", cmd);
+            else if(re == -6) printf("## The Table already exists : %s\n", cmd);
+            else if(re == -7) printf("## Please Check Table Name : %s\n", cmd);
+            else if(re == -8) printf("## Please Check Columns Name : %s\n", cmd);
+            else if(re == -9) printf("## Don't Match Columns : %s\n", cmd);
+            else if(re == -10) printf("## The CMD can used after DATABASE Select : %s\n", cmd);
+            else if(re == -11) printf("## Please Check Data Type : %s\n", cmd);
+            
         }
 
     }while(oper != opEXIT);
