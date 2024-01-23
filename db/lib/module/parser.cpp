@@ -71,6 +71,147 @@ int checkSyntex(int oper, int type, char* cmd){
     return 0;
 }
 
+condition* parseWhere(char* cmd){
+    condition* head = NULL;
+    int logical = opNONE;
+    // name=kims and age>=10
+    char* ptr = strtok(cmd, " ");
+    char* next = NULL;
+
+    int idx = -1;
+    while(ptr != NULL){
+        // increase index
+        ++idx;
+
+        // printf("ptr : %s\n" ,ptr);
+
+        // copy current cmd
+        char temp[100] = {'\0', };
+        strcpy(temp, ptr);
+
+        // save next cmd
+        next = strtok(NULL, "\n");
+
+        // printf("idx : %d\n", idx);
+
+        // check logical operator // if idx is odd number
+        if(idx % 2 == 1){
+            if(strcasecmp(ptr, "AND") == 0) logical = opAND;
+            if(strcasecmp(ptr, "OR") == 0) logical = opOR;
+
+            // printf("logical : [%d] %s\n", logical, ptr);
+
+            if(logical == opNONE){
+                deleteAllCondition(head);
+                return NULL;
+            }
+            ptr = strtok(next, " ");
+            continue;
+        }
+
+        // check relational operator
+        int relational = checkOperator(ptr);
+        // printf("relational : %d\n", relational);
+        if(relational == NN) {
+            deleteAllCondition(head);
+            return NULL;
+        };
+
+        condition* newNode = (condition*)malloc(sizeof(condition));
+        memset(newNode, 0, sizeof(condition));
+        newNode->oper = relational;
+        newNode->nextOr = NULL;
+        newNode->nextOr = NULL;
+
+        char* pptr = NULL;
+        // column name
+        if(relational == GT || relational == GE) pptr = strtok(temp, ">");
+        if(relational == LT || relational == LE) pptr = strtok(temp, "<");
+        if(relational == EQ) pptr = strtok(temp, "=");
+        if(relational == NE) pptr = strtok(temp, "!");
+        // printf("column name : %s\n", pptr);
+        strcpy(newNode->col, pptr); // ex: name
+
+        // skip relational operator and value
+        if(relational >= NE && relational <= LE) pptr = strtok(NULL, "=");
+        else pptr = strtok(NULL, " "); // ex: kims
+        // printf("value : %s\n", pptr);
+        strcpy(newNode->val, pptr);
+
+        if(head == NULL){
+            head = newNode;
+        }else{
+            condition* now = head;
+
+            // find last orNode
+            while(now->nextOr != NULL){
+                now = now->nextOr;
+            }
+
+            if(logical == opOR){
+                now->nextOr = newNode;
+            }
+            else if(logical == opAND){
+                // find last and Node
+                while(now->nextAnd != NULL){
+                    now = now->nextAnd;
+                }
+                now->nextAnd = newNode;
+            }
+
+            logical = opNONE;
+        }
+
+        ptr = strtok(next, " ");
+    }
+
+    return head;
+}
+
+void printConditions(condition* node){
+    if(node == NULL) return;
+    printf("===================\n");
+    printf("col : %s\n", node->col);
+    printf("val : %s\n", node->val);
+    printf("oper : %d\n", node->oper);
+    printf("and : %p\n", node->nextAnd);
+    printf("or : %p\n", node->nextOr);
+
+    printConditions(node->nextAnd);
+    printConditions(node->nextOr);
+}
+
+void deleteAllCondition(condition* node){
+    if(node == NULL) return;
+    deleteAllCondition(node->nextOr);
+    deleteAllCondition(node->nextAnd);
+
+    free(node);
+    return;
+}
+
+int checkOperator(char* cmd){
+    int eq = countChar(cmd, '=');
+    int gt = countChar(cmd, '>');
+    int lt = countChar(cmd, '<');
+    int nt = countChar(cmd, '!');
+
+    // kind of operator
+    // =, !=, >, <, >=, <=
+
+    if(eq > 0){
+        if(nt > 0) return NE;
+        if(gt > 0) return GE;
+        if(lt > 0) return LE;
+        return EQ;
+    }
+
+    if(gt > 0) return GT;
+    if(lt > 0) return LT;
+
+    return NN;
+}
+
 int countChar(char* cmd, char ch){
     int count = 0;
     for(int i=0; i<strlen(cmd); i++){

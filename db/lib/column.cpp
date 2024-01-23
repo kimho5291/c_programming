@@ -195,6 +195,10 @@ int deleteData(myTB* table, char* cmd){
         if(strcasecmp(ptr, "where") != 0) return -12;
 
         // parse conditions
+        ptr = strtok(NULL, "\n");
+        condition* condHead = parseWhere(ptr);
+
+        // printConditions(condHead);
 
         // delete the data after finding data that meets the conditions
         myCL* nowCL = table->column;
@@ -205,7 +209,7 @@ int deleteData(myTB* table, char* cmd){
             while(nowDT != NULL){
 
                 // check condition
-                
+
                 
                 ++index;
                 nowDT = nowDT->next;
