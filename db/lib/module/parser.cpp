@@ -44,14 +44,19 @@ int judgeType(int oper, char* cmd){
         if(strcasecmp("TABLE", ptr) == 0) return tpTABLE;
     }
 
-    if(oper >= opINSERT && oper <= opSELECT) return tpTABLE;
-    if(oper == opDESC) return tpTABLE;
+    if(oper >= opINSERT && oper <= opSELECT) {
+        if(strcasecmp("TABLE", ptr) == 0) return tpTABLE;
+    }
+    if(oper == opDESC) {
+        if(strcasecmp("TABLE", ptr) == 0) return tpTABLE;
+    }
 
     return -1;
 }
 
 int checkSyntex(int oper, int type, char* cmd){
     if(oper == -1) return -1;
+    if(type == -1) return -1;
 
     if(oper == opSHOW){
         if(countChar(cmd, ' ') != 1) return -1;

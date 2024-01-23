@@ -17,6 +17,8 @@ int selectTableCmd(char* cmd);
 int updateTableCmd(char* cmd);
 int deleteTableCmd(char* cmd);
 
+myTB* findTable(char* name);
+
 
 int dropTableCmd(char* cmd);
 int dropAllTB(myTB* node);

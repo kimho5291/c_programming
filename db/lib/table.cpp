@@ -13,6 +13,7 @@ void initTBDatabase(myDB* db){
 
     // 파일 읽기
     readTBFile();
+    readDTFile(tbUser, tbDatabase);
 }
 
 int showTables(){
@@ -178,7 +179,6 @@ int dropTableCmd(char* cmd){
 }
 
 int insertTableCmd(char* cmd){
-    int flag = -7; 
 
     char temp[200] = {'\0', };
     strcpy(temp, cmd);
@@ -186,22 +186,18 @@ int insertTableCmd(char* cmd){
 
     char* ptr = strtok(temp, " ");
     ptr = strtok(NULL, " ");
-
     ptr = strtok(NULL, " ");
-    char* name = (char*)malloc(sizeof(char) * strlen(ptr));
-    strcpy(name, ptr);
-    
-    myTB* now = tbDatabase->table;
-    while(now != NULL){
-        if(strcmp(name, now->name) == 0){
-            ptr = strtok(NULL, "\n");
-            flag = insertData(now, ptr);
-            break;
-        }
-        now = now->next;
-    }
-    free(name);
-    return flag;
+
+    myTB* now = findTable(ptr);
+    if(now == NULL) return -7;
+
+    ptr = strtok(NULL, "\n");
+    int re = insertData(now, ptr);
+    if(re < 0) return re;
+
+    writeDTFile(tbUser, tbDatabase, now);
+
+    return 1;
 }
 
 int selectTableCmd(char* cmd){
@@ -221,10 +217,36 @@ int updateTableCmd(char* cmd){
 }
 
 int deleteTableCmd(char* cmd){
+
+    char temp[200] = {'\0', };
+    strcpy(temp, cmd);
     // delete table [tableName] (optional) where [conditions]
 
+    char* ptr = strtok(temp, " "); //delete
+    ptr = strtok(NULL, " "); // table 
+    ptr = strtok(NULL, " "); // [tableName]
+
+    myTB* now = findTable(ptr);
+    if(now == NULL) return -7;
+
+    if(ptr != NULL) ptr = strtok(NULL, "\n"); // (optional) where [conditions]
+    int re = deleteData(now, ptr);
+    if(re < 0) return re;
+
+    writeDTFile(tbUser, tbDatabase, now);
 
     return 1;
+}
+
+myTB* findTable(char* name){
+    myTB* now = tbDatabase->table;
+    while(now != NULL){
+        if(strcmp(name, now->name) == 0){
+            return now;
+        }
+        now = now->next;
+    }
+    return NULL;
 }
 
 
