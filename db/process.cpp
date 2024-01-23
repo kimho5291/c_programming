@@ -26,15 +26,15 @@ bool login(char* id, char* pw){
 
 
 void process(){
-    char* cmd = NULL;
+    char cmd[1000] = {0, };
     int type = -1, oper = -1;
     int re = 0;
     
 
     do{
         re = 0;
-        free(cmd);
-        cmd = getString();
+        memset(cmd, 0, 1000);
+        getString(cmd);
         oper = judgeOper(cmd);
         type = judgeType(oper, cmd);
 
@@ -100,6 +100,7 @@ void process(){
             else if(re == -10) printf("## The CMD can used after DATABASE Select : %s\n", cmd);
             else if(re == -11) printf("## Please Check Data Type : %s\n", cmd);
             else if(re == -12) printf("## Please Check Syntex : %s\n", cmd);
+            else if(re == -13) printf("## Please Check Where Syntex : %s\n", cmd);
             
         }
 
@@ -124,4 +125,15 @@ char* getString(){
     strncpy(array, temp, idx);
 
     return array;
+}
+
+void getString(char* array){
+    int idx = 0;
+    char ch = 0;
+    do{
+        ch = getchar();
+        if(ch != '\n'){
+            array[idx++] = ch;
+        }
+    }while(ch != '\n' || idx == 0);
 }

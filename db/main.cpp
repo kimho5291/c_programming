@@ -2,7 +2,6 @@
 
 int main(int argc, char* argv[]){
 
-
     printf("-- DB START -- \n");
 
     sysInit();

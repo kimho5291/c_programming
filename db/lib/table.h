@@ -19,6 +19,8 @@ int deleteTableCmd(char* cmd);
 
 myTB* findTable(char* name);
 
+void testPrintTable(myTB* table);
+
 
 int dropTableCmd(char* cmd);
 int dropAllTB(myTB* node);

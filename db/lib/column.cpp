@@ -197,27 +197,68 @@ int deleteData(myTB* table, char* cmd){
         // parse conditions
         ptr = strtok(NULL, "\n");
         condition* condHead = parseWhere(ptr);
-
         // printConditions(condHead);
 
-        // delete the data after finding data that meets the conditions
-        myCL* nowCL = table->column;
-        while(nowCL != NULL){
+        // delete the data after finding data that meets the conditions        
+        int total = 0;
+        condition* now = condHead;
+        while(now != NULL){
+            int array1[ARRAYMAX] = {'\0', };
+            int array2[ARRAYMAX] = {'\0', };
+            int arrIdx1 = 0, arrIdx2 = 0;
 
-            int index = 0;
-            myDt* nowDT = nowCL->data;
-            while(nowDT != NULL){
+            condition* nowAnd = now;
+            while(nowAnd != NULL){
+                if(arrIdx1 == 0){
+                    arrIdx1 = findIndex(array1, table, nowAnd);
+                    printf("arrIdx1 : %d\n", arrIdx1);
+                    if(arrIdx1 < 0) {
+                        deleteAllCondition(condHead);
+                        return -13;
+                    }
+                }else{
+                    arrIdx2 = findIndex(array2, table, nowAnd);
+                    if(arrIdx2 < 0) {
+                        deleteAllCondition(condHead);
+                        return -13;
+                    }
 
-                // check condition
+                    arrIdx1 = intersection(array1, arrIdx1, array2, arrIdx2);
 
-                
-                ++index;
-                nowDT = nowDT->next;
+                    // memset(array2, 0, MAX); // index가 있어서 필요 없음
+                    arrIdx2 = 0;
+                }
+
+                for(int i=0; i<arrIdx1; i++){
+                    printf("11array[%d] : %d\n", i, array1[i]);
+                }
+                // reverse
+                reverseArr(array1, arrIdx1);
+
+                for(int i=0; i<arrIdx1; i++){
+                    printf("22array[%d] : %d\n", i, array1[i]);
+                }
+
+                // row delete
+                int re = 0;
+                for(int i=0; i<arrIdx1; i++){
+                    printf("array[%d] : %d\n", i, array1[i]);
+                    re = deleteRow(table->column, array1[i]);
+                    if(re < 0) {
+                        printf("where delete error : [%d]\n", re);
+                        deleteAllCondition(condHead);
+                        return -13;
+                    }
+                }
+                total += arrIdx1;
+
+                nowAnd = nowAnd->nextAnd;
             }
 
-            nowCL = nowCL->next;
+            now = now->nextOr;
         }
-
+        
+        printf("## TABLE DELETE SUC [%d] !!\n", total);
     }
 
     printf("## TABLE [%s] DELETE SUC !!\n", table->name);
@@ -225,19 +266,120 @@ int deleteData(myTB* table, char* cmd){
     return 1;
 }
 
+int findIndex(int* array, myTB* table, condition* node){
+    int arrIndex = 0;
+
+    int flag = 0;
+    myCL* now = table->column;
+    while(now != NULL){
+        if(strcasecmp(now->name, node->col) == 0){
+            flag = 1;
+
+            // check data size
+            if(strlen(node->val) > now->size){
+                return -1;
+            }
+            // check data type
+            if(strcasecmp(now->type, "char") == 0){
+                if(node->oper >= GE && node->oper <= LT){
+                    return -1;
+                }
+            }
+
+            int tempIndex = 0;
+            myDt* nowDT = now->data;
+            while(nowDT != NULL){
+                
+                // check data type
+                if(strcasecmp(now->type, "char") == 0){
+                    //printf("[%d] %s==%s = %D\n", tempIndex, nowDT->data.c_value, node->val, strcasecmp(nowDT->data.c_value, node->val));
+                    if(node->oper == EQ && strcasecmp(nowDT->data.c_value, node->val) == 0) array[arrIndex++] = tempIndex;
+                    if(node->oper == NE && strcasecmp(nowDT->data.c_value, node->val) != 0) array[arrIndex++] = tempIndex;
+                }else if(strcasecmp(now->type, "int") == 0){
+                    int temp = atoi(nowDT->data.c_value);
+                    if(isnan(temp)){
+                        return -1;
+                    }
+
+                    if(node->oper == EQ && nowDT->data.i_value == atoi(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == NE && nowDT->data.i_value != atoi(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == GE && nowDT->data.i_value >= atoi(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == LE && nowDT->data.i_value <= atoi(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == GT && nowDT->data.i_value > atoi(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == LT && nowDT->data.i_value < atoi(node->val)) array[arrIndex++] = tempIndex;
+                }else{ // double
+                    int temp = atoi(nowDT->data.c_value);
+                    if(isnan(temp)){
+                        return -1;
+                    }
+                    if(node->oper == EQ && nowDT->data.d_value == atof(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == NE && nowDT->data.d_value != atof(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == GE && nowDT->data.d_value >= atof(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == LE && nowDT->data.d_value <= atof(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == GT && nowDT->data.d_value > atof(node->val)) array[arrIndex++] = tempIndex;
+                    if(node->oper == LT && nowDT->data.d_value < atof(node->val)) array[arrIndex++] = tempIndex;
+                }
+
+                ++tempIndex;
+                nowDT = nowDT->next;
+            }
+
+        }
+        now = now->next;
+    }
+
+    if(flag == 0) return -1;
+    
+    return arrIndex;
+}
+
+int intersection(int* array1, int arrIdx1, int* array2, int arrIdx2){
+
+    int temp[1000] = {'\0', };
+    int tempIdx = arrIdx1;
+    for(int i=0; i<arrIdx1; i++){
+        temp[i] = array1[i];
+    }
+    memset(array1, 0, ARRAYMAX);
+    arrIdx1 = 0;
+
+    for(int i=0; i<tempIdx; i++){
+        for(int j=0; j<arrIdx2; j++){
+            if(temp[i] == array2[j]) array1[arrIdx1++] = temp[i];
+            break;
+        }
+    }
+
+    return arrIdx1;
+}
+
+void reverseArr(int* array, int arrIdx){
+    int mid = arrIdx/2;
+    for(int i=0; i<mid; i++){
+        int temp = array[i];
+        array[i] = array[(arrIdx-1)-i];
+        array[(arrIdx-1)-i] = temp;
+    }
+}
+
 int deleteRow(myCL* column, int index){
+    if(column == NULL) return 1;
+
+    int re = deleteRow(column->next, index);
+    if(re < 0) return re;
+
     if(column->data == NULL) return -1;
 
     if(index == 0){
         myDt* now = column->data;
-        column->data->next = now->next;
+        column->data = now->next;
         free(now);
 
     }else{
         myDt* now = column->data;
         myDt* pre = column->data; 
         int tempIndex = 0;
-        while(now != NULL || tempIndex != index){
+        while(now != NULL && tempIndex != index){
             pre = now;
             now = now->next;
             ++tempIndex;

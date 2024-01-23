@@ -229,9 +229,13 @@ int deleteTableCmd(char* cmd){
     myTB* now = findTable(ptr);
     if(now == NULL) return -7;
 
+    testPrintTable(now);
+
     if(ptr != NULL) ptr = strtok(NULL, "\n"); // (optional) where [conditions]
     int re = deleteData(now, ptr);
     if(re < 0) return re;
+
+    testPrintTable(now);
 
     writeDTFile(tbUser, tbDatabase, now);
 
@@ -247,6 +251,25 @@ myTB* findTable(char* name){
         now = now->next;
     }
     return NULL;
+}
+
+void testPrintTable(myTB* table){
+    printf("=========== ## TEST PRINT START ## ================\n");
+    myCL* now = table->column;
+    int index=0;
+    while(now != NULL){
+        printf("## [%d] %s ", index, now->name);
+        myDt* nowDT = now->data;
+        while(nowDT != NULL){
+            if(strcasecmp(now->type, "int") == 0) printf("%d ", nowDT->data.i_value);
+            else if(strcasecmp(now->type, "double") == 0) printf("%f ", nowDT->data.d_value);
+            else printf("%s ", nowDT->data.c_value);
+            nowDT = nowDT->next;
+        }
+        printf("\n");
+        now = now->next;
+    }
+    printf("=========== ## TEST PRINT END ## ================\n");
 }
 
 

@@ -14,3 +14,4 @@ bool login(char* id, char* pw);
 void process();
 
 char* getString();
+void getString(char* array);
